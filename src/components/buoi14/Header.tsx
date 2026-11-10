@@ -40,14 +40,14 @@ const Header = () => {
     <View style={styles.headerContainer}>
       <View style={styles.userInfoRow}>
         {user ? (
-          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <TouchableOpacity onPress={() => navigation.navigate('HomeUser' as any, { screen: 'Profile' })}>
             <Text style={styles.greetingText}>
               👋 Xin chào, <Text style={styles.usernameText}>{user.username}</Text>
             </Text>
             <Text style={styles.roleBadge}>{user.role === 'admin' ? '🔑 Quản trị viên' : '👤 Thành viên'}</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity onPress={() => navigation.navigate('LoginSqlite')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Login' as any)}>
             <Text style={styles.loginLink}>🔒 Đăng nhập / Đăng ký</Text>
           </TouchableOpacity>
         )}
@@ -58,14 +58,14 @@ const Header = () => {
         {user?.role === 'admin' && (
           <TouchableOpacity
             style={[styles.iconBtn, { backgroundColor: '#FF6F00' }]}
-            onPress={() => navigation.navigate('AdminDashboard')}
+            onPress={() => navigation.navigate('HomeUser' as any, { screen: 'AdminDashboard' })}
           >
             <Text style={styles.iconText}>⚙️</Text>
           </TouchableOpacity>
         )}
 
         {/* Nút Giỏ hàng */}
-        <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('Cart')}>
+        <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('CartTab' as any)}>
           <Text style={styles.iconText}>🛒</Text>
           {cartCount > 0 && (
             <View style={styles.badge}>
@@ -77,7 +77,7 @@ const Header = () => {
         {user && (
           <>
             {/* Nút Lịch sử đơn hàng */}
-            <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('OrderHistory')}>
+            <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('HomeUser' as any, { screen: 'OrderHistory' })}>
               <Text style={styles.iconText}>📜</Text>
             </TouchableOpacity>
 

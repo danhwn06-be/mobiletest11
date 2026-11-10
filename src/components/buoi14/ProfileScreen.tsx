@@ -96,7 +96,7 @@ const ProfileScreen = () => {
 
           <TouchableOpacity
             style={styles.loginPrimaryBtn}
-            onPress={() => navigation.navigate('LoginSqlite')}
+            onPress={() => navigation.navigate('Login' as any)}
             activeOpacity={0.8}
           >
             <Text style={styles.loginPrimaryBtnText}>🔒 Đăng Nhập</Text>
@@ -104,7 +104,7 @@ const ProfileScreen = () => {
 
           <TouchableOpacity
             style={styles.signupSecondaryBtn}
-            onPress={() => navigation.navigate('SignupSqlite')}
+            onPress={() => navigation.navigate('Signup' as any)}
             activeOpacity={0.8}
           >
             <Text style={styles.signupSecondaryBtnText}>📝 Đăng Ký Tài Khoản Mới</Text>
@@ -144,7 +144,7 @@ const ProfileScreen = () => {
       {user.role === 'admin' && (
         <TouchableOpacity
           style={styles.adminCard}
-          onPress={() => navigation.navigate('AdminDashboard')}
+          onPress={() => navigation.navigate('HomeUser' as any, { screen: 'AdminDashboard' })}
           activeOpacity={0.85}
         >
           <View style={styles.adminCardContent}>

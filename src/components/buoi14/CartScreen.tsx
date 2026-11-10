@@ -73,7 +73,11 @@ const CartScreen = () => {
       Alert.alert('Thông báo', 'Giỏ hàng của bạn đang trống!');
       return;
     }
-    navigation.navigate('Checkout', { cartItems, totalAmount });
+    // Chuyển sang Stack HomeUser và kích hoạt màn hình Checkout kèm tham số
+    navigation.navigate('HomeUser' as any, {
+      screen: 'Checkout',
+      params: { cartItems, totalAmount },
+    });
   };
 
   return (
@@ -121,7 +125,7 @@ const CartScreen = () => {
             <Text style={styles.emptyText}>Giỏ hàng đang trống!</Text>
             <TouchableOpacity
               style={styles.shopNowBtn}
-              onPress={() => navigation.navigate('Home')}
+              onPress={() => navigation.navigate('HomeUser' as any, { screen: 'Home' })}
             >
               <Text style={styles.shopNowText}>Khám phá sản phẩm</Text>
             </TouchableOpacity>
