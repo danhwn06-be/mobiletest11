@@ -6,9 +6,11 @@ import UserManagement from './UserManagement';
 import CategoryManagement from './CategoryManagement';
 import ProductManagement from './ProductManagement';
 
+import OrderManagement from './OrderManagement';
+
 const AdminDashboard = () => {
   const navigation = useNavigation<any>();
-  const [screen, setScreen] = useState<'home' | 'users' | 'categories' | 'products'>('home');
+  const [screen, setScreen] = useState<'home' | 'users' | 'categories' | 'products' | 'orders'>('home');
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
 
   // Bảo vệ route: Chỉ cho phép người dùng có role admin truy cập
@@ -50,7 +52,6 @@ const AdminDashboard = () => {
   }, [navigation]);
 
   const handleBackToStore = () => {
-    // Điều hướng thẳng về thanh Tab chính (MainTabs -> HomeUser)
     navigation.navigate('MainTabs');
   };
 
@@ -61,6 +62,7 @@ const AdminDashboard = () => {
   if (screen === 'users') return <UserManagement onBack={() => setScreen('home')} />;
   if (screen === 'categories') return <CategoryManagement onBack={() => setScreen('home')} />;
   if (screen === 'products') return <ProductManagement onBack={() => setScreen('home')} />;
+  if (screen === 'orders') return <OrderManagement onBack={() => setScreen('home')} />;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -99,6 +101,17 @@ const AdminDashboard = () => {
           <Text style={styles.cardIcon}>📦</Text>
           <Text style={styles.cardTitle}>Quản Lý Sản Phẩm</Text>
           <Text style={styles.cardDesc}>Thêm sản phẩm mới, cập nhật giá, hình ảnh</Text>
+        </TouchableOpacity>
+
+        {/* Nút 4: Quản lý Đơn hàng */}
+        <TouchableOpacity
+          style={[styles.cardBtn, { backgroundColor: '#9C27B0' }]}
+          onPress={() => setScreen('orders')}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.cardIcon}>🚚</Text>
+          <Text style={styles.cardTitle}>Quản Lý Đơn Hàng (Orders)</Text>
+          <Text style={styles.cardDesc}>Xem danh sách & Cập nhật tình trạng đơn hàng</Text>
         </TouchableOpacity>
 
         {/* Nút Quay lại Giao diện người dùng */}

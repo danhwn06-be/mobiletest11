@@ -406,3 +406,14 @@ export const fetchAllOrders = async (): Promise<Order[]> => {
     return [];
   }
 };
+
+export const updateOrderStatus = async (orderId: number, status: string): Promise<boolean> => {
+  try {
+    const db = await getDb();
+    await db.executeSql('UPDATE orders SET status = ? WHERE id = ?', [status, orderId]);
+    return true;
+  } catch (error) {
+    console.error('❌ updateOrderStatus error:', error);
+    return false;
+  }
+};
