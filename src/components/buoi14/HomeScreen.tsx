@@ -162,6 +162,24 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
           style={styles.bannerImage}
         />
 
+        {/* Menu điều hướng ngang: Home, Danh mục sản phẩm */}
+        <View style={styles.menuContainer}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => navigation.navigate('Home')}
+          >
+            <Text style={styles.menuText}>Home</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() =>
+              navigation.navigate('ProductsByCategory', { categoryId: 1 })
+            }
+          >
+            <Text style={styles.menuText}>Danh mục sản phẩm</Text>
+          </TouchableOpacity>
+        </View>
+
         {/* 9. Ô Tìm kiếm theo tên sản phẩm HOẶC danh mục */}
         <View style={styles.searchContainer}>
           <Text style={styles.searchIcon}>🔍</Text>
@@ -231,6 +249,16 @@ const styles = StyleSheet.create({
   mainContainer: { flex: 1, backgroundColor: '#F8F9FA' },
   scrollContent: { paddingBottom: 30 },
   bannerImage: { width: '100%', height: 130, resizeMode: 'cover' },
+  menuContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 10,
+    backgroundColor: '#E8EAF6',
+    borderBottomWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  menuItem: { paddingHorizontal: 16, paddingVertical: 4 },
+  menuText: { fontSize: 14, fontWeight: 'bold', color: '#3F51B5' },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',

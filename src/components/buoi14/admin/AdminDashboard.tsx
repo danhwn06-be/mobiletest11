@@ -6,11 +6,9 @@ import UserManagement from './UserManagement';
 import CategoryManagement from './CategoryManagement';
 import ProductManagement from './ProductManagement';
 
-import OrderManagement from './OrderManagement';
-
 const AdminDashboard = () => {
   const navigation = useNavigation<any>();
-  const [screen, setScreen] = useState<'home' | 'users' | 'categories' | 'products' | 'orders'>('home');
+  const [screen, setScreen] = useState<'home' | 'users' | 'categories' | 'products'>('home');
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
 
   // Bảo vệ route: Chỉ cho phép người dùng có role admin truy cập
@@ -23,7 +21,7 @@ const AdminDashboard = () => {
             {
               text: 'OK',
               onPress: () => {
-                navigation.navigate('MainTabs');
+                navigation.navigate('HomeUser');
               },
             },
           ]);
@@ -36,7 +34,7 @@ const AdminDashboard = () => {
             {
               text: 'OK',
               onPress: () => {
-                navigation.navigate('MainTabs');
+                navigation.navigate('HomeUser');
               },
             },
           ]);
@@ -45,14 +43,14 @@ const AdminDashboard = () => {
         }
         setIsAdmin(true);
       } catch {
-        navigation.navigate('MainTabs');
+        navigation.navigate('HomeUser');
       }
     };
     checkAdminPermission();
   }, [navigation]);
 
   const handleBackToStore = () => {
-    navigation.navigate('MainTabs');
+    navigation.navigate('HomeUser');
   };
 
   if (isAdmin === false) {
@@ -62,12 +60,11 @@ const AdminDashboard = () => {
   if (screen === 'users') return <UserManagement onBack={() => setScreen('home')} />;
   if (screen === 'categories') return <CategoryManagement onBack={() => setScreen('home')} />;
   if (screen === 'products') return <ProductManagement onBack={() => setScreen('home')} />;
-  if (screen === 'orders') return <OrderManagement onBack={() => setScreen('home')} />;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.headerTitle}>⚙️ TRANG CHỦ QUẢN TRỊ ADMIN</Text>
-      <Text style={styles.subTitle}>Hệ thống quản lý bán hàng thương mại điện tử</Text>
+      <Text style={styles.subTitle}>Hệ thống quản lý ứng dụng</Text>
 
       <View style={styles.gridContainer}>
         {/* Nút 1: Quản lý User */}
@@ -78,10 +75,10 @@ const AdminDashboard = () => {
         >
           <Text style={styles.cardIcon}>👥</Text>
           <Text style={styles.cardTitle}>Quản Lý User</Text>
-          <Text style={styles.cardDesc}>Xem, phân quyền admin/user, xóa tài khoản</Text>
+          <Text style={styles.cardDesc}>Xem danh sách, cập nhật vai trò, xóa user</Text>
         </TouchableOpacity>
 
-        {/* Nút 2: Quản lý Danh mục */}
+        {/* Nút 2: Quản lý Loại Sản Phẩm */}
         <TouchableOpacity
           style={[styles.cardBtn, { backgroundColor: '#2196F3' }]}
           onPress={() => setScreen('categories')}
@@ -89,7 +86,7 @@ const AdminDashboard = () => {
         >
           <Text style={styles.cardIcon}>🏷️</Text>
           <Text style={styles.cardTitle}>Quản Lý Loại Sản Phẩm</Text>
-          <Text style={styles.cardDesc}>Thêm, sửa, xóa loại & thêm sản phẩm trực tiếp</Text>
+          <Text style={styles.cardDesc}>Xem, thêm, sửa, xóa & thêm SP cho loại tương ứng</Text>
         </TouchableOpacity>
 
         {/* Nút 3: Quản lý Sản phẩm */}
@@ -100,18 +97,7 @@ const AdminDashboard = () => {
         >
           <Text style={styles.cardIcon}>📦</Text>
           <Text style={styles.cardTitle}>Quản Lý Sản Phẩm</Text>
-          <Text style={styles.cardDesc}>Thêm sản phẩm mới, cập nhật giá, hình ảnh</Text>
-        </TouchableOpacity>
-
-        {/* Nút 4: Quản lý Đơn hàng */}
-        <TouchableOpacity
-          style={[styles.cardBtn, { backgroundColor: '#9C27B0' }]}
-          onPress={() => setScreen('orders')}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.cardIcon}>🚚</Text>
-          <Text style={styles.cardTitle}>Quản Lý Đơn Hàng (Orders)</Text>
-          <Text style={styles.cardDesc}>Xem danh sách & Cập nhật tình trạng đơn hàng</Text>
+          <Text style={styles.cardDesc}>Xem, thêm, sửa, xóa sản phẩm</Text>
         </TouchableOpacity>
 
         {/* Nút Quay lại Giao diện người dùng */}
@@ -120,7 +106,7 @@ const AdminDashboard = () => {
           onPress={handleBackToStore}
           activeOpacity={0.8}
         >
-          <Text style={styles.backToUserText}>🛍️ Quay lại Cửa Hàng Mua Sắm</Text>
+          <Text style={styles.backToUserText}>🛍️ Quay lại Trang Chủ Người Dùng</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
