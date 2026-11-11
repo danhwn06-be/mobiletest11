@@ -1,7 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Text, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HomeStackScreen from './HomeStackScreen';
 import AdminDashboard from './admin/AdminDashboard';
@@ -20,27 +19,31 @@ const Tab = createBottomTabNavigator<AdminBottomTabParamList>();
 const AppTabs = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
-  useFocusEffect(
-    useCallback(() => {
-      const checkAdminState = async () => {
-        try {
-          const data = await AsyncStorage.getItem('loggedInUser');
-          if (data) {
-            const user = JSON.parse(data);
-            setIsAdmin(user.role === 'admin');
-          } else {
-            setIsAdmin(false);
-          }
-        } catch {
-          setIsAdmin(false);
-        }
-      };
-      checkAdminState();
-    }, [])
-  );
+  const checkAdminState = useCallback(async () => {
+    try {
+      const data = await AsyncStorage.getItem('loggedInUser');
+      if (data) {
+        const user = JSON.parse(data);
+        setIsAdmin(user.role === 'admin');
+      } else {
+        setIsAdmin(false);
+      }
+    } catch {
+      setIsAdmin(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkAdminState();
+  }, [checkAdminState]);
 
   return (
     <Tab.Navigator
+      screenListeners={{
+        state: () => {
+          checkAdminState();
+        },
+      }}
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: '#6200EA',
