@@ -28,7 +28,6 @@ export type HomeStackParamList = {
   Profile: undefined;
   LoginSqlite: undefined;
   SignupSqlite: undefined;
-  AdminDashboard: undefined;
   CategoryManagement: { categoryId?: number };
   ProductManagement: { categoryId?: number };
   UserManagement: undefined;

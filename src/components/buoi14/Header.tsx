@@ -58,7 +58,7 @@ const Header = () => {
         {user?.role === 'admin' && (
           <TouchableOpacity
             style={[styles.iconBtn, { backgroundColor: '#FF6F00' }]}
-            onPress={() => navigation.navigate('HomeUser' as any, { screen: 'AdminDashboard' })}
+            onPress={() => navigation.navigate('HomeAdmin' as any)}
           >
             <Text style={styles.iconText}>⚙️</Text>
           </TouchableOpacity>

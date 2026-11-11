@@ -9,7 +9,6 @@ import OrderHistoryScreen from './OrderHistoryScreen';
 import ProfileScreen from './ProfileScreen';
 import LoginSqlite from './LoginSqlite';
 import SignupSqlite from './SignupSqlite';
-import AdminDashboard from './admin/AdminDashboard';
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -32,7 +31,6 @@ const HomeStackScreen = () => {
       <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Trang cá nhân' }} />
       <Stack.Screen name="LoginSqlite" component={LoginSqlite} options={{ title: 'Đăng nhập', headerShown: false }} />
       <Stack.Screen name="SignupSqlite" component={SignupSqlite} options={{ title: 'Đăng ký', headerShown: false }} />
-      <Stack.Screen name="AdminDashboard" component={AdminDashboard} options={{ title: 'Quản trị Admin' }} />
     </Stack.Navigator>
   );
 };

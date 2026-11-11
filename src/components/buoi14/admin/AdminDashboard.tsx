@@ -21,7 +21,7 @@ const AdminDashboard = () => {
             {
               text: 'OK',
               onPress: () => {
-                handleBackToStore();
+                navigation.navigate('HomeUser' as any);
               },
             },
           ]);
@@ -34,7 +34,7 @@ const AdminDashboard = () => {
             {
               text: 'OK',
               onPress: () => {
-                handleBackToStore();
+                navigation.navigate('HomeUser' as any);
               },
             },
           ]);
@@ -43,27 +43,14 @@ const AdminDashboard = () => {
         }
         setIsAdmin(true);
       } catch {
-        handleBackToStore();
+        navigation.navigate('HomeUser' as any);
       }
     };
     checkAdminPermission();
   }, [navigation]);
 
   const handleBackToStore = () => {
-    try {
-      if (navigation.canGoBack()) {
-        navigation.popToTop();
-      } else {
-        const parent = navigation.getParent();
-        if (parent) {
-          parent.navigate('HomeUser');
-        } else {
-          navigation.navigate('HomeUser');
-        }
-      }
-    } catch {
-      navigation.navigate('HomeUser');
-    }
+    navigation.navigate('HomeUser' as any);
   };
 
   if (isAdmin === false) {

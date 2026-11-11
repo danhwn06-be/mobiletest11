@@ -24,11 +24,9 @@ const LoginSqlite = () => {
             text: 'OK',
             onPress: () => {
               if (user.role === 'admin') {
-                navigation.navigate('AdminDashboard');
-              } else if (navigation.canGoBack()) {
-                navigation.goBack();
+                navigation.navigate('HomeAdmin' as any);
               } else {
-                navigation.navigate('MainTabs');
+                navigation.navigate('HomeUser' as any);
               }
             },
           },

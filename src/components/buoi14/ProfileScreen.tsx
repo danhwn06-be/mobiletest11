@@ -144,7 +144,7 @@ const ProfileScreen = () => {
       {user.role === 'admin' && (
         <TouchableOpacity
           style={styles.adminCard}
-          onPress={() => navigation.navigate('HomeUser' as any, { screen: 'AdminDashboard' })}
+          onPress={() => navigation.navigate('HomeAdmin' as any)}
           activeOpacity={0.85}
         >
           <View style={styles.adminCardContent}>
