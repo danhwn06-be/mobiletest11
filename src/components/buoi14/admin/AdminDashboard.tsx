@@ -5,10 +5,11 @@ import { useNavigation } from '@react-navigation/native';
 import UserManagement from './UserManagement';
 import CategoryManagement from './CategoryManagement';
 import ProductManagement from './ProductManagement';
+import OrderManagement from './OrderManagement';
 
 const AdminDashboard = () => {
   const navigation = useNavigation<any>();
-  const [screen, setScreen] = useState<'home' | 'users' | 'categories' | 'products'>('home');
+  const [screen, setScreen] = useState<'home' | 'users' | 'categories' | 'products' | 'orders'>('home');
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
 
   // Bảo vệ route: Chỉ cho phép người dùng có role admin truy cập
@@ -21,7 +22,7 @@ const AdminDashboard = () => {
             {
               text: 'OK',
               onPress: () => {
-                navigation.navigate('HomeUser' as any);
+                handleBackToStore();
               },
             },
           ]);
@@ -34,7 +35,7 @@ const AdminDashboard = () => {
             {
               text: 'OK',
               onPress: () => {
-                navigation.navigate('HomeUser' as any);
+                handleBackToStore();
               },
             },
           ]);
@@ -43,7 +44,7 @@ const AdminDashboard = () => {
         }
         setIsAdmin(true);
       } catch {
-        navigation.navigate('HomeUser' as any);
+        handleBackToStore();
       }
     };
     checkAdminPermission();
@@ -60,6 +61,7 @@ const AdminDashboard = () => {
   if (screen === 'users') return <UserManagement onBack={() => setScreen('home')} />;
   if (screen === 'categories') return <CategoryManagement onBack={() => setScreen('home')} />;
   if (screen === 'products') return <ProductManagement onBack={() => setScreen('home')} />;
+  if (screen === 'orders') return <OrderManagement onBack={() => setScreen('home')} />;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -98,6 +100,17 @@ const AdminDashboard = () => {
           <Text style={styles.cardIcon}>📦</Text>
           <Text style={styles.cardTitle}>Quản lý sản phẩm</Text>
           <Text style={styles.cardDesc}>Xem, thêm, sửa, xóa sản phẩm</Text>
+        </TouchableOpacity>
+
+        {/* Nút 4: Quản lý đơn hàng (Admin C.2 - 0.5đ) */}
+        <TouchableOpacity
+          style={[styles.cardBtn, { backgroundColor: '#9C27B0' }]}
+          onPress={() => setScreen('orders')}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.cardIcon}>🚚</Text>
+          <Text style={styles.cardTitle}>Quản lý đơn hàng</Text>
+          <Text style={styles.cardDesc}>Xem danh sách & cập nhật tình trạng đơn hàng</Text>
         </TouchableOpacity>
 
         {/* Nút Quay lại cửa hàng */}
