@@ -26,8 +26,6 @@ export type HomeStackParamList = {
   Checkout: { cartItems: any[]; totalAmount: number };
   OrderHistory: undefined;
   Profile: undefined;
-  LoginSqlite: undefined;
-  SignupSqlite: undefined;
   CategoryManagement: { categoryId?: number };
   ProductManagement: { categoryId?: number };
   UserManagement: undefined;

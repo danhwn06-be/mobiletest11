@@ -7,8 +7,6 @@ import CartScreen from './CartScreen';
 import CheckoutScreen from './CheckoutScreen';
 import OrderHistoryScreen from './OrderHistoryScreen';
 import ProfileScreen from './ProfileScreen';
-import LoginSqlite from './LoginSqlite';
-import SignupSqlite from './SignupSqlite';
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -29,8 +27,6 @@ const HomeStackScreen = () => {
       <Stack.Screen name="Checkout" component={CheckoutScreen} options={{ title: 'Thanh toán' }} />
       <Stack.Screen name="OrderHistory" component={OrderHistoryScreen} options={{ title: 'Lịch sử mua hàng' }} />
       <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Trang cá nhân' }} />
-      <Stack.Screen name="LoginSqlite" component={LoginSqlite} options={{ title: 'Đăng nhập', headerShown: false }} />
-      <Stack.Screen name="SignupSqlite" component={SignupSqlite} options={{ title: 'Đăng ký', headerShown: false }} />
     </Stack.Navigator>
   );
 };

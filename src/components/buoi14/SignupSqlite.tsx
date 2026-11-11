@@ -19,7 +19,7 @@ const SignupSqlite = () => {
       const success = await addUser(username.trim(), password.trim(), role);
       if (success) {
         Alert.alert('Thành công 🎉', 'Đăng ký tài khoản thành công!', [
-          { text: 'Đăng nhập ngay', onPress: () => navigation.navigate('LoginSqlite') },
+          { text: 'Đăng nhập ngay', onPress: () => navigation.navigate('Login') },
         ]);
       } else {
         Alert.alert('Lỗi', 'Tên đăng nhập đã tồn tại, vui lòng chọn tên khác!');
@@ -75,7 +75,7 @@ const SignupSqlite = () => {
           <Text style={styles.buttonText}>ĐĂNG KÝ MỚI</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('LoginSqlite')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
           <Text style={styles.switchText}>
             Đã có tài khoản? <Text style={styles.highlightText}>Đăng nhập ngay</Text>
           </Text>
@@ -83,13 +83,7 @@ const SignupSqlite = () => {
 
         <TouchableOpacity
           style={styles.backLinkBtn}
-          onPress={() => {
-            if (navigation.canGoBack()) {
-              navigation.goBack();
-            } else {
-              navigation.navigate('MainTabs');
-            }
-          }}
+          onPress={() => navigation.navigate('HomeUser')}
         >
           <Text style={styles.backLinkText}>← Quay lại cửa hàng</Text>
         </TouchableOpacity>

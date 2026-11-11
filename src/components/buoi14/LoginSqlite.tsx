@@ -69,7 +69,7 @@ const LoginSqlite = () => {
           <Text style={styles.buttonText}>ĐĂNG NHẬP</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('SignupSqlite')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
           <Text style={styles.switchText}>
             Chưa có tài khoản? <Text style={styles.highlightText}>Đăng ký ngay</Text>
           </Text>
@@ -77,13 +77,7 @@ const LoginSqlite = () => {
 
         <TouchableOpacity
           style={styles.backLinkBtn}
-          onPress={() => {
-            if (navigation.canGoBack()) {
-              navigation.goBack();
-            } else {
-              navigation.navigate('MainTabs');
-            }
-          }}
+          onPress={() => navigation.navigate('HomeUser')}
         >
           <Text style={styles.backLinkText}>← Quay lại cửa hàng</Text>
         </TouchableOpacity>
