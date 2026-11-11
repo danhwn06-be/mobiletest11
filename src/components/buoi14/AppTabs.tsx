@@ -10,7 +10,7 @@ import SignupSqlite from './SignupSqlite';
 
 export type AdminBottomTabParamList = {
   HomeUser: undefined;
-  HomeAdmin?: undefined;
+  HomeAdmin: undefined;
   Signup: undefined;
   Login: undefined;
 };
@@ -46,9 +46,9 @@ const AppTabs = () => {
         tabBarActiveTintColor: '#6200EA',
         tabBarInactiveTintColor: '#757575',
         tabBarStyle: {
-          paddingBottom: Platform.OS === 'android' ? 10 : 6,
+          paddingBottom: Platform.OS === 'android' ? 8 : 6,
           paddingTop: 6,
-          height: 68,
+          height: 64,
           backgroundColor: '#FFFFFF',
           borderTopWidth: 1,
           borderColor: '#EEEEEE',
@@ -70,18 +70,17 @@ const AppTabs = () => {
           ),
         }}
       />
-      {isAdmin && (
-        <Tab.Screen
-          name="HomeAdmin"
-          component={AdminDashboard}
-          options={{
-            title: 'Admin',
-            tabBarIcon: ({ color, size }) => (
-              <Text style={{ fontSize: size, color }}>⚙️</Text>
-            ),
-          }}
-        />
-      )}
+      <Tab.Screen
+        name="HomeAdmin"
+        component={AdminDashboard}
+        options={{
+          title: 'Admin',
+          tabBarItemStyle: isAdmin ? undefined : { display: 'none' },
+          tabBarIcon: ({ color, size }) => (
+            <Text style={{ fontSize: size, color }}>⚙️</Text>
+          ),
+        }}
+      />
       <Tab.Screen
         name="Signup"
         component={SignupSqlite}
