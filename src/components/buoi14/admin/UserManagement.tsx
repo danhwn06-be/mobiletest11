@@ -81,7 +81,7 @@ const UserManagement = ({ onBack }: { onBack?: () => void }) => {
         </TouchableOpacity>
       )}
 
-      <Text style={styles.title}>👥 Quản Lý Người Dùng (Users)</Text>
+      <Text style={styles.title}>👥 Quản lý user</Text>
 
       {/* Form nhập liệu */}
       <View style={styles.formCard}>

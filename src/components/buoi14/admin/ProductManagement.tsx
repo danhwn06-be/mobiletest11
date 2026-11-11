@@ -171,7 +171,7 @@ const ProductManagement = ({ initialCategoryId, onBack }: Props) => {
         </TouchableOpacity>
       )}
 
-      <Text style={styles.title}>📦 Quản Lý Sản Phẩm</Text>
+      <Text style={styles.title}>📦 Quản lý sản phẩm</Text>
 
       <View style={styles.formCard}>
         <TextInput

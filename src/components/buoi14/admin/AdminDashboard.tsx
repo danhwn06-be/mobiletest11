@@ -21,7 +21,7 @@ const AdminDashboard = () => {
             {
               text: 'OK',
               onPress: () => {
-                navigation.navigate('HomeUser');
+                handleBackToStore();
               },
             },
           ]);
@@ -34,7 +34,7 @@ const AdminDashboard = () => {
             {
               text: 'OK',
               onPress: () => {
-                navigation.navigate('HomeUser');
+                handleBackToStore();
               },
             },
           ]);
@@ -43,14 +43,27 @@ const AdminDashboard = () => {
         }
         setIsAdmin(true);
       } catch {
-        navigation.navigate('HomeUser');
+        handleBackToStore();
       }
     };
     checkAdminPermission();
   }, [navigation]);
 
   const handleBackToStore = () => {
-    navigation.navigate('HomeUser');
+    try {
+      if (navigation.canGoBack()) {
+        navigation.popToTop();
+      } else {
+        const parent = navigation.getParent();
+        if (parent) {
+          parent.navigate('HomeUser');
+        } else {
+          navigation.navigate('HomeUser');
+        }
+      }
+    } catch {
+      navigation.navigate('HomeUser');
+    }
   };
 
   if (isAdmin === false) {
@@ -67,46 +80,46 @@ const AdminDashboard = () => {
       <Text style={styles.subTitle}>Hệ thống quản lý ứng dụng</Text>
 
       <View style={styles.gridContainer}>
-        {/* Nút 1: Quản lý User */}
+        {/* Nút 1: Quản lý user */}
         <TouchableOpacity
           style={[styles.cardBtn, { backgroundColor: '#4CAF50' }]}
           onPress={() => setScreen('users')}
           activeOpacity={0.8}
         >
           <Text style={styles.cardIcon}>👥</Text>
-          <Text style={styles.cardTitle}>Quản Lý User</Text>
+          <Text style={styles.cardTitle}>Quản lý user</Text>
           <Text style={styles.cardDesc}>Xem danh sách, cập nhật vai trò, xóa user</Text>
         </TouchableOpacity>
 
-        {/* Nút 2: Quản lý Loại Sản Phẩm */}
+        {/* Nút 2: Quản lý loại sản phẩm */}
         <TouchableOpacity
           style={[styles.cardBtn, { backgroundColor: '#2196F3' }]}
           onPress={() => setScreen('categories')}
           activeOpacity={0.8}
         >
           <Text style={styles.cardIcon}>🏷️</Text>
-          <Text style={styles.cardTitle}>Quản Lý Loại Sản Phẩm</Text>
+          <Text style={styles.cardTitle}>Quản lý loại sản phẩm</Text>
           <Text style={styles.cardDesc}>Xem, thêm, sửa, xóa & thêm SP cho loại tương ứng</Text>
         </TouchableOpacity>
 
-        {/* Nút 3: Quản lý Sản phẩm */}
+        {/* Nút 3: Quản lý sản phẩm */}
         <TouchableOpacity
           style={[styles.cardBtn, { backgroundColor: '#FF9800' }]}
           onPress={() => setScreen('products')}
           activeOpacity={0.8}
         >
           <Text style={styles.cardIcon}>📦</Text>
-          <Text style={styles.cardTitle}>Quản Lý Sản Phẩm</Text>
+          <Text style={styles.cardTitle}>Quản lý sản phẩm</Text>
           <Text style={styles.cardDesc}>Xem, thêm, sửa, xóa sản phẩm</Text>
         </TouchableOpacity>
 
-        {/* Nút Quay lại Giao diện người dùng */}
+        {/* Nút Quay lại cửa hàng */}
         <TouchableOpacity
           style={styles.backToUserBtn}
           onPress={handleBackToStore}
           activeOpacity={0.8}
         >
-          <Text style={styles.backToUserText}>🛍️ Quay lại Trang Chủ Người Dùng</Text>
+          <Text style={styles.backToUserText}>Quay lại cửa hàng</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

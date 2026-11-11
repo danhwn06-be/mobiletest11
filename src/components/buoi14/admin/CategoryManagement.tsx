@@ -79,7 +79,7 @@ const CategoryManagement = ({ onBack }: { onBack?: () => void }) => {
         </TouchableOpacity>
       )}
 
-      <Text style={styles.title}>🏷️ Quản Lý Loại Sản Phẩm</Text>
+      <Text style={styles.title}>🏷️ Quản lý loại sản phẩm</Text>
 
       <View style={styles.formCard}>
         <TextInput
