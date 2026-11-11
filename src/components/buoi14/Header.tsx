@@ -65,7 +65,7 @@ const Header = () => {
         )}
 
         {/* Nút Giỏ hàng */}
-        <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('CartTab' as any)}>
+        <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('HomeUser', { screen: 'Cart' })}>
           <Text style={styles.iconText}>🛒</Text>
           {cartCount > 0 && (
             <View style={styles.badge}>
