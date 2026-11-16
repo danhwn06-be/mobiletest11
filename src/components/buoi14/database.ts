@@ -74,6 +74,13 @@ export const initDatabase = async (onSuccess?: () => void): Promise<void> => {
   try {
     const database = await getDb();
 
+    // Bổ sung cột stock nếu cơ sở dữ liệu cũ chưa có (sử dụng try-catch riêng ngoài transaction)
+    try {
+      await database.executeSql('ALTER TABLE products ADD COLUMN stock INTEGER DEFAULT 10');
+    } catch {
+      // Đã có cột stock, bỏ qua lỗi duplicate column
+    }
+
     database.transaction((tx) => {
       // 1. Categories table
       tx.executeSql('CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)');
@@ -91,14 +98,6 @@ export const initDatabase = async (onSuccess?: () => void): Promise<void> => {
         stock INTEGER DEFAULT 10,
         FOREIGN KEY (categoryId) REFERENCES categories(id)
       )`);
-
-      // Bổ sung cột stock nếu cơ sở dữ liệu cũ chưa có
-      tx.executeSql(
-        'ALTER TABLE products ADD COLUMN stock INTEGER DEFAULT 10',
-        [],
-        () => {},
-        () => true
-      );
 
       initialProducts.forEach((p) => {
         tx.executeSql(
