@@ -12,7 +12,7 @@ import {
   Platform,
   PermissionsAndroid,
 } from 'react-native';
-import { launchImageLibrary } from 'react-native-image-picker';
+import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import {
   Category,
   Product,
@@ -50,6 +50,7 @@ const ProductManagement = ({ initialCategoryId, onBack }: Props) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
+  const [stock, setStock] = useState('10');
   const [categoryId, setCategoryId] = useState<number>(initialCategoryId || 1);
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -86,31 +87,63 @@ const ProductManagement = ({ initialCategoryId, onBack }: Props) => {
     }
   };
 
-  const handlePickImage = async () => {
-    const hasPermission = await requestImagePermission();
-    if (!hasPermission) {
-      Alert.alert(
-        'Quyền truy cập thư viện ảnh',
-        'Ứng dụng cần quyền truy cập thư viện ảnh để chọn hình ảnh sản phẩm. Vui lòng cấp quyền trong cài đặt thiết bị!'
-      );
-      return;
-    }
+  const handleLaunchCamera = () => {
+    launchCamera(
+      { mediaType: 'photo', quality: 0.8, saveToPhotos: true },
+      (res) => {
+        if (res.assets && res.assets[0]?.uri) {
+          setImageUri(res.assets[0].uri);
+        }
+      }
+    );
+  };
 
+  const handleLaunchLibrary = () => {
     launchImageLibrary(
-      {
-        mediaType: 'photo',
-        selectionLimit: 1,
-        quality: 0.8,
-      },
+      { mediaType: 'photo', selectionLimit: 1, quality: 0.8 },
       (res) => {
         if (res.didCancel) {
           console.log('User cancelled image picker');
         } else if (res.errorCode) {
-          Alert.alert('Lỗi chọn ảnh', res.errorMessage || `Mã lỗi: ${res.errorCode}`);
+          Alert.alert(
+            'Lỗi PhotoPicker trên Máy ảo',
+            'Máy ảo chưa hỗ trợ thư viện mới. Bạn muốn chọn phương thức nào?',
+            [
+              { text: '📷 Chụp từ Camera', onPress: handleLaunchCamera },
+              { text: '🖼️ Dùng hinh1.jpg', onPress: () => setImageUri('hinh1.jpg') },
+              { text: '🖼️ Dùng hinh2.jpg', onPress: () => setImageUri('hinh2.jpg') },
+              { text: 'Hủy', style: 'cancel' },
+            ]
+          );
         } else if (res.assets && res.assets[0]?.uri) {
           setImageUri(res.assets[0].uri);
         }
       }
+    );
+  };
+
+  const handlePickImage = async () => {
+    Alert.alert(
+      'Chọn hình ảnh sản phẩm',
+      'Vui lòng chọn nguồn tải hình ảnh:',
+      [
+        {
+          text: '📁 Mở Thư viện thiết bị',
+          onPress: async () => {
+            const hasPermission = await requestImagePermission();
+            if (!hasPermission) {
+              Alert.alert('Quyền truy cập', 'Ứng dụng cần quyền truy cập thư viện ảnh.');
+              return;
+            }
+            handleLaunchLibrary();
+          },
+        },
+        { text: '📷 Chụp từ Camera', onPress: handleLaunchCamera },
+        { text: '🖼️ Ảnh mẫu hinh1.jpg', onPress: () => setImageUri('hinh1.jpg') },
+        { text: '🖼️ Ảnh mẫu hinh2.jpg', onPress: () => setImageUri('hinh2.jpg') },
+        { text: 'Hủy', style: 'cancel' },
+      ],
+      { cancelable: true }
     );
   };
 
@@ -124,6 +157,7 @@ const ProductManagement = ({ initialCategoryId, onBack }: Props) => {
       price: parseFloat(price),
       img: imageUri || 'hinh1.jpg',
       categoryId,
+      stock: parseInt(stock, 10) || 0,
     };
 
     if (editingId !== null) {
@@ -137,6 +171,7 @@ const ProductManagement = ({ initialCategoryId, onBack }: Props) => {
 
     setName('');
     setPrice('');
+    setStock('10');
     setImageUri(null);
     loadData();
   };
@@ -144,6 +179,7 @@ const ProductManagement = ({ initialCategoryId, onBack }: Props) => {
   const handleEdit = (item: Product) => {
     setName(item.name);
     setPrice(item.price.toString());
+    setStock(item.stock ? item.stock.toString() : '0');
     setCategoryId(item.categoryId);
     setImageUri(item.img);
     setEditingId(item.id);
@@ -180,17 +216,26 @@ const ProductManagement = ({ initialCategoryId, onBack }: Props) => {
           value={name}
           onChangeText={setName}
         />
-        <TextInput
-          style={styles.input}
-          placeholder="Giá bán (VNĐ)..."
-          keyboardType="numeric"
-          value={price}
-          onChangeText={setPrice}
-        />
+        <View style={styles.rowInputs}>
+          <TextInput
+            style={[styles.input, { flex: 1 }]}
+            placeholder="Giá bán (VNĐ)..."
+            keyboardType="numeric"
+            value={price}
+            onChangeText={setPrice}
+          />
+          <TextInput
+            style={[styles.input, { flex: 1, marginLeft: 8 }]}
+            placeholder="Số lượng tồn kho..."
+            keyboardType="numeric"
+            value={stock}
+            onChangeText={setStock}
+          />
+        </View>
 
         <TouchableOpacity style={styles.btnImage} onPress={handlePickImage}>
           <Text style={styles.btnImageText}>
-            {imageUri ? '📷 Đã chọn ảnh (Nhấp để chọn lại)' : '📷 Chọn hình ảnh từ thiết bị'}
+            {imageUri ? '📷 Đã chọn ảnh (Nhấp chọn lại)' : '📷 Chọn hình ảnh từ thiết bị'}
           </Text>
         </TouchableOpacity>
 
@@ -225,7 +270,12 @@ const ProductManagement = ({ initialCategoryId, onBack }: Props) => {
               <View style={styles.info}>
                 <Text style={styles.prodName}>{item.name}</Text>
                 <Text style={styles.price}>{item.price.toLocaleString('vi-VN')} đ</Text>
-                <Text style={styles.catBadge}>Danh mục: {catName}</Text>
+                <View style={styles.badgeRow}>
+                  <Text style={styles.catBadge}>Loại: {catName}</Text>
+                  <Text style={[styles.stockBadge, item.stock <= 0 && styles.outOfStockBadge]}>
+                    {item.stock > 0 ? `Tồn kho: ${item.stock}` : '❌ Hết hàng'}
+                  </Text>
+                </View>
               </View>
 
               <View style={styles.actionRow}>
@@ -256,6 +306,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 20, fontWeight: 'bold', color: '#212121', marginBottom: 12, textAlign: 'center' },
   formCard: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 14, marginBottom: 16, elevation: 2 },
   input: { borderWidth: 1, borderColor: '#E0E0E0', borderRadius: 8, padding: 10, marginBottom: 10, color: '#212121' },
+  rowInputs: { flexDirection: 'row' },
   btnImage: { backgroundColor: '#8E24AA', padding: 10, borderRadius: 8, alignItems: 'center', marginBottom: 10 },
   btnImageText: { color: '#FFFFFF', fontWeight: 'bold', fontSize: 13 },
   label: { fontSize: 13, fontWeight: 'bold', color: '#616161', marginBottom: 6 },
@@ -279,7 +330,10 @@ const styles = StyleSheet.create({
   info: { flex: 1 },
   prodName: { fontSize: 15, fontWeight: 'bold', color: '#212121' },
   price: { color: '#E53935', fontWeight: 'bold', fontSize: 14, marginVertical: 2 },
+  badgeRow: { flexDirection: 'row', gap: 8, marginTop: 2 },
   catBadge: { fontSize: 11, color: '#757575' },
+  stockBadge: { fontSize: 11, fontWeight: 'bold', color: '#2E7D32', backgroundColor: '#E8F5E9', paddingHorizontal: 6, borderRadius: 4 },
+  outOfStockBadge: { color: '#C62828', backgroundColor: '#FFEBEE' },
   actionRow: { flexDirection: 'row', gap: 6 },
   iconBtn: { padding: 4 },
   icon: { fontSize: 18 },

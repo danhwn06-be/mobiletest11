@@ -86,6 +86,10 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
   );
 
   const handleAddToCart = async (product: Product) => {
+    if (product.stock <= 0) {
+      Alert.alert('Hết hàng', `Sản phẩm "${product.name}" hiện đã hết hàng trong kho!`);
+      return;
+    }
     await addToCart(product, 1);
     Alert.alert('Thành công 🎉', `Đã thêm "${product.name}" vào giỏ hàng!`);
   };
@@ -133,12 +137,18 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
           >
             <Text style={styles.detailBtnText}>Chi tiết</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.addCartBtn}
-            onPress={() => handleAddToCart(item)}
-          >
-            <Text style={styles.addCartBtnText}>+ Giỏ</Text>
-          </TouchableOpacity>
+          {item.stock > 0 ? (
+            <TouchableOpacity
+              style={styles.addCartBtn}
+              onPress={() => handleAddToCart(item)}
+            >
+              <Text style={styles.addCartBtnText}>+ Giỏ</Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.outOfStockBtn}>
+              <Text style={styles.outOfStockBtnText}>Hết hàng</Text>
+            </View>
+          )}
         </View>
       </View>
     </View>
@@ -315,6 +325,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addCartBtnText: { color: '#FFFFFF', fontSize: 12, fontWeight: 'bold' },
+  outOfStockBtn: {
+    flex: 1,
+    backgroundColor: '#E0E0E0',
+    paddingVertical: 6,
+    borderRadius: 6,
+    alignItems: 'center',
+  },
+  outOfStockBtnText: { color: '#757575', fontSize: 12, fontWeight: 'bold' },
   emptyView: { padding: 30, alignItems: 'center' },
   emptyText: { color: '#757575', fontSize: 15 },
 });

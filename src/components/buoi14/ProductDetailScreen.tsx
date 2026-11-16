@@ -46,7 +46,18 @@ const ProductDetailScreen = () => {
     fetchCategories().then(setCategories);
   }, []);
 
+  const isOutOfStock = product.stock <= 0;
+
   const handleAddToCart = async (buyNow: boolean = false) => {
+    if (isOutOfStock) {
+      Alert.alert('Hết hàng', `Sản phẩm "${product.name}" hiện đã hết hàng trong kho!`);
+      return;
+    }
+    if (quantity > product.stock) {
+      Alert.alert('Lỗi số lượng', `Kho hiện chỉ còn ${product.stock} sản phẩm. Vui lòng chọn số lượng ít hơn!`);
+      return;
+    }
+
     await addToCart(product, quantity);
     if (buyNow) {
       navigation.navigate('Cart');
@@ -71,7 +82,13 @@ const ProductDetailScreen = () => {
 
         {/* Thông tin sản phẩm */}
         <View style={styles.infoCard}>
-          <Text style={styles.catBadge}>🏷️ {currentCat ? currentCat.name : 'Loại sản phẩm'}</Text>
+          <View style={styles.catRow}>
+            <Text style={styles.catBadge}>🏷️ {currentCat ? currentCat.name : 'Loại sản phẩm'}</Text>
+            <Text style={[styles.stockBadge, isOutOfStock && styles.outOfStockBadge]}>
+              {isOutOfStock ? '❌ Hết hàng' : `Kho còn: ${product.stock}`}
+            </Text>
+          </View>
+
           <Text style={styles.name}>{product.name}</Text>
           <Text style={styles.price}>{product.price.toLocaleString('vi-VN')} đ</Text>
 
@@ -81,21 +98,26 @@ const ProductDetailScreen = () => {
           </Text>
 
           {/* Chọn số lượng */}
-          <View style={styles.quantityRow}>
-            <Text style={styles.quantityLabel}>Số lượng:</Text>
-            <View style={styles.qtyControl}>
-              <TouchableOpacity
-                style={styles.qtyBtn}
-                onPress={() => setQuantity((q) => Math.max(1, q - 1))}
-              >
-                <Text style={styles.qtyBtnText}>-</Text>
-              </TouchableOpacity>
-              <Text style={styles.qtyVal}>{quantity}</Text>
-              <TouchableOpacity style={styles.qtyBtn} onPress={() => setQuantity((q) => q + 1)}>
-                <Text style={styles.qtyBtnText}>+</Text>
-              </TouchableOpacity>
+          {!isOutOfStock && (
+            <View style={styles.quantityRow}>
+              <Text style={styles.quantityLabel}>Số lượng:</Text>
+              <View style={styles.qtyControl}>
+                <TouchableOpacity
+                  style={styles.qtyBtn}
+                  onPress={() => setQuantity((q) => Math.max(1, q - 1))}
+                >
+                  <Text style={styles.qtyBtnText}>-</Text>
+                </TouchableOpacity>
+                <Text style={styles.qtyVal}>{quantity}</Text>
+                <TouchableOpacity
+                  style={styles.qtyBtn}
+                  onPress={() => setQuantity((q) => Math.min(product.stock, q + 1))}
+                >
+                  <Text style={styles.qtyBtnText}>+</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
+          )}
         </View>
 
         {/* Danh mục liên quan */}
@@ -111,12 +133,20 @@ const ProductDetailScreen = () => {
 
       {/* Thanh nút bấm đặt hàng dưới cùng */}
       <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.cartBtn} onPress={() => handleAddToCart(false)}>
-          <Text style={styles.cartBtnText}>🛒 Thêm vào giỏ</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buyNowBtn} onPress={() => handleAddToCart(true)}>
-          <Text style={styles.buyNowBtnText}>⚡ Mua Ngay</Text>
-        </TouchableOpacity>
+        {isOutOfStock ? (
+          <View style={styles.outOfStockBar}>
+            <Text style={styles.outOfStockText}>🚫 HÀNG HIỆN TẠI ĐÃ HẾT TRONG KHO</Text>
+          </View>
+        ) : (
+          <>
+            <TouchableOpacity style={styles.cartBtn} onPress={() => handleAddToCart(false)}>
+              <Text style={styles.cartBtnText}>🛒 Thêm vào giỏ</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.buyNowBtn} onPress={() => handleAddToCart(true)}>
+              <Text style={styles.buyNowBtnText}>⚡ Mua Ngay</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
     </View>
   );
@@ -142,7 +172,10 @@ const styles = StyleSheet.create({
     padding: 16,
     elevation: 2,
   },
-  catBadge: { color: '#6200EA', fontWeight: 'bold', fontSize: 13, marginBottom: 4 },
+  catRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
+  catBadge: { color: '#6200EA', fontWeight: 'bold', fontSize: 13 },
+  stockBadge: { color: '#2E7D32', backgroundColor: '#E8F5E9', fontWeight: 'bold', fontSize: 12, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 },
+  outOfStockBadge: { color: '#C62828', backgroundColor: '#FFEBEE' },
   name: { fontSize: 22, fontWeight: 'bold', color: '#212121', marginBottom: 8 },
   price: { fontSize: 22, fontWeight: 'bold', color: '#E53935', marginBottom: 16 },
   descTitle: { fontSize: 15, fontWeight: 'bold', color: '#424242', marginBottom: 4 },
@@ -191,6 +224,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buyNowBtnText: { color: '#FFFFFF', fontWeight: 'bold', fontSize: 15 },
+  outOfStockBar: {
+    flex: 1,
+    backgroundColor: '#E0E0E0',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  outOfStockText: { color: '#757575', fontWeight: 'bold', fontSize: 14 },
 });
 
 export default ProductDetailScreen;

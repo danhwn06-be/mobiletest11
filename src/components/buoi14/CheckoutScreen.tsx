@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
@@ -17,6 +18,22 @@ import { clearCart } from './CartManager';
 
 type RouteProps = RouteProp<HomeStackParamList, 'Checkout'>;
 type NavigationProp = NativeStackNavigationProp<HomeStackParamList>;
+
+const getImageSource = (img: string) => {
+  if (img && (img.startsWith('file://') || img.startsWith('http'))) return { uri: img };
+  switch (img) {
+    case 'hinh1.jpg':
+      return require('../../assets/book_images/hinh1.jpg');
+    case 'hinh2.jpg':
+      return require('../../assets/book_images/hinh2.jpg');
+    case 'hinh3.jpg':
+      return require('../../assets/book_images/hinh3.jpg');
+    case 'hinh4.jpg':
+      return require('../../assets/book_images/hinh4.jpg');
+    default:
+      return require('../../assets/book_images/hinh1.jpg');
+  }
+};
 
 const CheckoutScreen = () => {
   const route = useRoute<RouteProps>();
@@ -73,7 +90,7 @@ const CheckoutScreen = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.headerTitle}>📋 Xác Nhận Đơn Hàng</Text>
 
-      {/* Thông tin người nhận */}
+      {/* Thông tin giao hàng */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Thông tin giao hàng</Text>
         <Text style={styles.label}>Tài khoản người đặt:</Text>
@@ -103,20 +120,24 @@ const CheckoutScreen = () => {
         />
       </View>
 
-      {/* Tóm tắt đơn hàng */}
+      {/* Tóm tắt đơn hàng có HIỂN THỊ HÌNH ẢNH SẢN PHẨM */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Sản phẩm đã chọn ({cartItems.length})</Text>
         {cartItems.map((item, idx) => (
-          <View key={idx} style={styles.itemRow}>
-            <Text style={styles.itemName}>{item.productName} (x{item.quantity})</Text>
+          <View key={idx} style={styles.checkoutItemRow}>
+            <Image source={getImageSource(item.img)} style={styles.checkoutItemImg} />
+            <View style={styles.itemDetails}>
+              <Text style={styles.itemName} numberOfLines={2}>{item.productName}</Text>
+              <Text style={styles.itemQty}>Số lượng: x{item.quantity}</Text>
+            </View>
             <Text style={styles.itemPrice}>{(item.price * item.quantity).toLocaleString('vi-VN')} đ</Text>
           </View>
         ))}
 
         <View style={styles.divider} />
 
-        <View style={styles.itemRow}>
-          <Text style={styles.totalLabel}>Tổng cộng:</Text>
+        <View style={styles.summaryRow}>
+          <Text style={styles.totalLabel}>Tổng thanh toán:</Text>
           <Text style={styles.totalPrice}>{totalAmount.toLocaleString('vi-VN')} đ</Text>
         </View>
       </View>
@@ -137,10 +158,26 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, borderColor: '#E0E0E0', borderRadius: 8, padding: 10, marginBottom: 12, color: '#212121' },
   readOnlyInput: { backgroundColor: '#F1F3F5', color: '#757575' },
   textArea: { height: 70, textAlignVertical: 'top' },
-  itemRow: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 4 },
-  itemName: { fontSize: 14, color: '#212121', flex: 1 },
-  itemPrice: { fontSize: 14, fontWeight: 'bold', color: '#212121' },
-  divider: { height: 1, backgroundColor: '#EEEEEE', marginVertical: 8 },
+  checkoutItemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F3F5',
+  },
+  checkoutItemImg: {
+    width: 52,
+    height: 52,
+    borderRadius: 8,
+    marginRight: 10,
+    backgroundColor: '#F5F5F5',
+  },
+  itemDetails: { flex: 1, marginRight: 8 },
+  itemName: { fontSize: 14, fontWeight: 'bold', color: '#212121' },
+  itemQty: { fontSize: 12, color: '#757575', marginTop: 2 },
+  itemPrice: { fontSize: 14, fontWeight: 'bold', color: '#E53935' },
+  divider: { height: 1, backgroundColor: '#EEEEEE', marginVertical: 10 },
+  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   totalLabel: { fontSize: 16, fontWeight: 'bold', color: '#212121' },
   totalPrice: { fontSize: 18, fontWeight: 'bold', color: '#E53935' },
   submitBtn: { backgroundColor: '#6200EA', paddingVertical: 14, borderRadius: 10, alignItems: 'center', marginTop: 8 },

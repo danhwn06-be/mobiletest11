@@ -21,6 +21,7 @@ export interface Product {
   price: number;
   img: string;
   categoryId: number;
+  stock: number; // 👈 Quản lý số lượng tồn kho
 }
 
 export interface User {
@@ -61,12 +62,12 @@ const initialCategories: Category[] = [
 ];
 
 const initialProducts: Product[] = [
-  { id: 1, name: 'Áo sơ mi nam Oxford', price: 280000, img: 'hinh1.jpg', categoryId: 1 },
-  { id: 2, name: 'Giày Sneaker Nike White', price: 1250000, img: 'hinh2.jpg', categoryId: 2 },
-  { id: 3, name: 'Balo Laptop Chống Nước', price: 450000, img: 'hinh3.jpg', categoryId: 3 },
-  { id: 4, name: 'Mũ Lưỡi Trai Sport', price: 150000, img: 'hinh4.jpg', categoryId: 4 },
-  { id: 5, name: 'Túi Xách Nữ Da Thật', price: 890000, img: 'hinh1.jpg', categoryId: 5 },
-  { id: 6, name: 'Áo Polo Thể Thao', price: 220000, img: 'hinh2.jpg', categoryId: 1 },
+  { id: 1, name: 'Áo sơ mi nam Oxford', price: 280000, img: 'hinh1.jpg', categoryId: 1, stock: 15 },
+  { id: 2, name: 'Giày Sneaker Nike White', price: 1250000, img: 'hinh2.jpg', categoryId: 2, stock: 10 },
+  { id: 3, name: 'Balo Laptop Chống Nước', price: 450000, img: 'hinh3.jpg', categoryId: 3, stock: 8 },
+  { id: 4, name: 'Mũ Lưỡi Trai Sport', price: 150000, img: 'hinh4.jpg', categoryId: 4, stock: 5 },
+  { id: 5, name: 'Túi Xách Nữ Da Thật', price: 890000, img: 'hinh1.jpg', categoryId: 5, stock: 12 },
+  { id: 6, name: 'Áo Polo Thể Thao', price: 220000, img: 'hinh2.jpg', categoryId: 1, stock: 0 }, // Sẵn mẫu 0 để test hết hàng
 ];
 
 export const initDatabase = async (onSuccess?: () => void): Promise<void> => {
@@ -87,12 +88,22 @@ export const initDatabase = async (onSuccess?: () => void): Promise<void> => {
         price REAL,
         img TEXT,
         categoryId INTEGER,
+        stock INTEGER DEFAULT 10,
         FOREIGN KEY (categoryId) REFERENCES categories(id)
       )`);
+
+      // Bổ sung cột stock nếu cơ sở dữ liệu cũ chưa có
+      tx.executeSql(
+        'ALTER TABLE products ADD COLUMN stock INTEGER DEFAULT 10',
+        [],
+        () => {},
+        () => true
+      );
+
       initialProducts.forEach((p) => {
         tx.executeSql(
-          'INSERT OR IGNORE INTO products (id, name, price, img, categoryId) VALUES (?, ?, ?, ?, ?)',
-          [p.id, p.name, p.price, p.img, p.categoryId]
+          'INSERT OR IGNORE INTO products (id, name, price, img, categoryId, stock) VALUES (?, ?, ?, ?, ?, ?)',
+          [p.id, p.name, p.price, p.img, p.categoryId, p.stock]
         );
       });
 
@@ -199,7 +210,11 @@ export const fetchProducts = async (): Promise<Product[]> => {
     const [results] = await db.executeSql('SELECT * FROM products');
     const items: Product[] = [];
     for (let i = 0; i < results.rows.length; i++) {
-      items.push(results.rows.item(i));
+      const item = results.rows.item(i);
+      items.push({
+        ...item,
+        stock: item.stock !== undefined && item.stock !== null ? item.stock : 10,
+      });
     }
     return items;
   } catch (error) {
@@ -214,7 +229,11 @@ export const fetchProductsByCategory = async (categoryId: number): Promise<Produ
     const [results] = await db.executeSql('SELECT * FROM products WHERE categoryId = ?', [categoryId]);
     const items: Product[] = [];
     for (let i = 0; i < results.rows.length; i++) {
-      items.push(results.rows.item(i));
+      const item = results.rows.item(i);
+      items.push({
+        ...item,
+        stock: item.stock !== undefined && item.stock !== null ? item.stock : 10,
+      });
     }
     return items;
   } catch (error) {
@@ -227,8 +246,8 @@ export const addProduct = async (product: Omit<Product, 'id'>): Promise<boolean>
   try {
     const db = await getDb();
     await db.executeSql(
-      'INSERT INTO products (name, price, img, categoryId) VALUES (?, ?, ?, ?)',
-      [product.name, product.price, product.img, product.categoryId]
+      'INSERT INTO products (name, price, img, categoryId, stock) VALUES (?, ?, ?, ?, ?)',
+      [product.name, product.price, product.img, product.categoryId, product.stock !== undefined ? product.stock : 10]
     );
     return true;
   } catch (error) {
@@ -241,8 +260,8 @@ export const updateProduct = async (product: Product): Promise<boolean> => {
   try {
     const db = await getDb();
     await db.executeSql(
-      'UPDATE products SET name = ?, price = ?, categoryId = ?, img = ? WHERE id = ?',
-      [product.name, product.price, product.categoryId, product.img, product.id]
+      'UPDATE products SET name = ?, price = ?, categoryId = ?, img = ?, stock = ? WHERE id = ?',
+      [product.name, product.price, product.categoryId, product.img, product.stock, product.id]
     );
     return true;
   } catch (error) {
@@ -354,6 +373,11 @@ export const createOrder = async (
       await db.executeSql(
         'INSERT INTO order_items (orderId, productId, productName, price, quantity, img) VALUES (?, ?, ?, ?, ?, ?)',
         [orderId, item.productId, item.productName, item.price, item.quantity, item.img]
+      );
+      // Trừ số lượng tồn kho của sản phẩm khi mua hàng thành công
+      await db.executeSql(
+        'UPDATE products SET stock = CASE WHEN stock >= ? THEN stock - ? ELSE 0 END WHERE id = ?',
+        [item.quantity, item.quantity, item.productId]
       );
     }
     return true;
