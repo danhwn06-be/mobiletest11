@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeStackParamList } from './HomeScreen';
-import { createOrder, User } from './database';
+import { createOrder, fetchProducts, User } from './database';
 import { clearCart } from './CartManager';
 
 type RouteProps = RouteProp<HomeStackParamList, 'Checkout'>;
@@ -59,6 +59,29 @@ const CheckoutScreen = () => {
     if (!address.trim() || !phone.trim()) {
       Alert.alert('Thiếu thông tin', 'Vui lòng nhập Địa chỉ giao hàng và Số điện thoại!');
       return;
+    }
+
+    // 🔒 BẢO VỆ TỒN KHO THỜI GIAN THỰC: Kiểm tra kho SQLite trước khi chốt đơn
+    const liveProducts = await fetchProducts();
+    for (const item of cartItems) {
+      const liveProd = liveProducts.find((p) => p.id === item.productId);
+      const stock = liveProd ? liveProd.stock : 0;
+
+      if (stock <= 0) {
+        Alert.alert(
+          'Sản phẩm hết hàng',
+          `Rất tiếc, sản phẩm "${item.productName}" vừa hết hàng trong kho. Vui lòng quay lại giỏ hàng!`
+        );
+        return;
+      }
+
+      if (item.quantity > stock) {
+        Alert.alert(
+          'Không đủ tồn kho',
+          `Rất tiếc, sản phẩm "${item.productName}" chỉ còn ${stock} cái trong kho (bạn đang đặt ${item.quantity} cái). Vui lòng điều chỉnh lại giỏ hàng!`
+        );
+        return;
+      }
     }
 
     const userId = user ? user.id : 0;

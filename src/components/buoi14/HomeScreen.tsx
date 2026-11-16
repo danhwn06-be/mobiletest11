@@ -86,12 +86,12 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
   );
 
   const handleAddToCart = async (product: Product) => {
-    if (product.stock <= 0) {
-      Alert.alert('Hết hàng', `Sản phẩm "${product.name}" hiện đã hết hàng trong kho!`);
-      return;
+    const res = await addToCart(product, 1);
+    if (res.success) {
+      Alert.alert('Thành công 🎉', `Đã thêm "${product.name}" vào giỏ hàng!`);
+    } else {
+      Alert.alert('Không thể thêm', res.message || 'Sản phẩm không đủ số lượng tồn kho!');
     }
-    await addToCart(product, 1);
-    Alert.alert('Thành công 🎉', `Đã thêm "${product.name}" vào giỏ hàng!`);
   };
 
   // 9. Lọc Tìm kiếm thông minh theo tên sản phẩm HOẶC theo tên danh mục (Hỗ trợ tiếng Việt không dấu & có dấu)

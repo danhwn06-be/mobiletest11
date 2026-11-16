@@ -47,8 +47,12 @@ export default function ProductsByCategoryScreen() {
   }, [selectedCatId]);
 
   const handleAddToCart = async (product: Product) => {
-    await addToCart(product, 1);
-    Alert.alert('Thành công 🎉', `Đã thêm "${product.name}" vào giỏ hàng!`);
+    const res = await addToCart(product, 1);
+    if (res.success) {
+      Alert.alert('Thành công 🎉', `Đã thêm "${product.name}" vào giỏ hàng!`);
+    } else {
+      Alert.alert('Không thể thêm', res.message || 'Sản phẩm không đủ số lượng tồn kho!');
+    }
   };
 
   const selectedCat = categories.find((c) => c.id === selectedCatId);

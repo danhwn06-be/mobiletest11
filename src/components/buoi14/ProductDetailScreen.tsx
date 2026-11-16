@@ -49,20 +49,15 @@ const ProductDetailScreen = () => {
   const isOutOfStock = product.stock <= 0;
 
   const handleAddToCart = async (buyNow: boolean = false) => {
-    if (isOutOfStock) {
-      Alert.alert('Hết hàng', `Sản phẩm "${product.name}" hiện đã hết hàng trong kho!`);
-      return;
-    }
-    if (quantity > product.stock) {
-      Alert.alert('Lỗi số lượng', `Kho hiện chỉ còn ${product.stock} sản phẩm. Vui lòng chọn số lượng ít hơn!`);
-      return;
-    }
-
-    await addToCart(product, quantity);
-    if (buyNow) {
-      navigation.navigate('Cart');
+    const res = await addToCart(product, quantity);
+    if (res.success) {
+      if (buyNow) {
+        navigation.navigate('Cart');
+      } else {
+        Alert.alert('Thành công 🎉', `Đã thêm ${quantity} x "${product.name}" vào giỏ hàng!`);
+      }
     } else {
-      Alert.alert('Thành công 🎉', `Đã thêm ${quantity} x "${product.name}" vào giỏ hàng!`);
+      Alert.alert('Không thể thêm', res.message || 'Sản phẩm không đủ số lượng tồn kho!');
     }
   };
 

@@ -11,7 +11,7 @@ import {
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeStackParamList } from './HomeScreen';
-import { OrderItem } from './database';
+import { OrderItem, fetchProducts } from './database';
 import { getCart, updateCartQuantity, removeFromCart } from './CartManager';
 
 type NavigationProp = NativeStackNavigationProp<HomeStackParamList>;
@@ -48,8 +48,16 @@ const CartScreen = () => {
   );
 
   const handleUpdateQuantity = async (productId: number, newQty: number) => {
-    const updated = await updateCartQuantity(productId, newQty);
-    setCartItems(updated);
+    const liveProds = await fetchProducts();
+    const prod = liveProds.find((p) => p.id === productId);
+    const maxStock = prod ? prod.stock : undefined;
+
+    const res = await updateCartQuantity(productId, newQty, maxStock);
+    if (!res.success && res.message) {
+      Alert.alert('Cảnh báo tồn kho', res.message);
+    } else {
+      setCartItems(res.cart);
+    }
   };
 
   const handleRemoveItem = (productId: number, productName: string) => {
