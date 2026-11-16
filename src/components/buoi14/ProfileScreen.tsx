@@ -114,7 +114,7 @@ const ProfileScreen = () => {
         <View style={styles.actionCard}>
           <TouchableOpacity
             style={styles.menuRow}
-            onPress={() => navigation.navigate('CartTab')}
+            onPress={() => navigation.navigate('HomeUser', { screen: 'Cart' })}
           >
             <Text style={styles.menuText}>🛒 Giỏ hàng của bạn</Text>
             <Text style={styles.arrowText}>❯</Text>
@@ -199,7 +199,7 @@ const ProfileScreen = () => {
 
         <TouchableOpacity
           style={styles.menuRow}
-          onPress={() => navigation.navigate('CartTab')}
+          onPress={() => navigation.navigate('HomeUser', { screen: 'Cart' })}
         >
           <Text style={styles.menuText}>🛒 Giỏ hàng của tôi</Text>
           <Text style={styles.arrowText}>❯</Text>
