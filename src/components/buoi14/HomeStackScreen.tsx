@@ -7,10 +7,6 @@ import CartScreen from './CartScreen';
 import CheckoutScreen from './CheckoutScreen';
 import OrderHistoryScreen from './OrderHistoryScreen';
 import ProfileScreen from './ProfileScreen';
-import UserManagement from './admin/UserManagement';
-import CategoryManagement from './admin/CategoryManagement';
-import ProductManagement from './admin/ProductManagement';
-import OrderManagement from './admin/OrderManagement';
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -31,10 +27,6 @@ const HomeStackScreen = () => {
       <Stack.Screen name="Checkout" component={CheckoutScreen} options={{ title: 'Thanh toán' }} />
       <Stack.Screen name="OrderHistory" component={OrderHistoryScreen} options={{ title: 'Lịch sử mua hàng' }} />
       <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Trang cá nhân' }} />
-      <Stack.Screen name="UserManagement" component={UserManagement} options={{ title: 'Quản lý user' }} />
-      <Stack.Screen name="CategoryManagement" component={CategoryManagement} options={{ title: 'Quản lý loại sản phẩm' }} />
-      <Stack.Screen name="ProductManagement" component={ProductManagement} options={{ title: 'Quản lý sản phẩm' }} />
-      <Stack.Screen name="OrderManagement" component={OrderManagement} options={{ title: 'Quản lý đơn hàng' }} />
     </Stack.Navigator>
   );
 };

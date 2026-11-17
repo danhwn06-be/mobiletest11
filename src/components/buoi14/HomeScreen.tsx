@@ -29,7 +29,6 @@ export type HomeStackParamList = {
   CategoryManagement: { categoryId?: number };
   ProductManagement: { categoryId?: number };
   UserManagement: undefined;
-  OrderManagement: undefined;
 };
 
 type HomeScreenProps = NativeStackScreenProps<HomeStackParamList, 'Home'>;
