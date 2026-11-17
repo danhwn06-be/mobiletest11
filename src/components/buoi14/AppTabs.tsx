@@ -49,18 +49,17 @@ const AppTabs = () => {
         tabBarActiveTintColor: '#6200EA',
         tabBarInactiveTintColor: '#757575',
         tabBarStyle: {
-          paddingBottom: Platform.OS === 'android' ? 12 : 6,
-          paddingTop: 4,
-          height: 68,
+          paddingBottom: Platform.OS === 'android' ? 8 : 6,
+          paddingTop: 6,
+          height: 64,
           backgroundColor: '#FFFFFF',
           borderTopWidth: 1,
           borderColor: '#EEEEEE',
           elevation: 8,
         },
         tabBarLabelStyle: {
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: 'bold',
-          marginBottom: Platform.OS === 'android' ? 4 : 0,
         },
       }}
     >
