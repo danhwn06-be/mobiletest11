@@ -21,7 +21,7 @@ export interface Product {
   price: number;
   img: string;
   categoryId: number;
-  stock: number; // 👈 Quản lý số lượng tồn kho
+  stock: number;
 }
 
 export interface User {
@@ -50,6 +50,7 @@ export interface Order {
   totalAmount: number;
   createdAt: string;
   status: string;
+  paymentMethod?: string; // 👈 Phương thức thanh toán
   items?: OrderItem[];
 }
 
@@ -67,18 +68,25 @@ const initialProducts: Product[] = [
   { id: 3, name: 'Balo Laptop Chống Nước', price: 450000, img: 'hinh3.jpg', categoryId: 3, stock: 8 },
   { id: 4, name: 'Mũ Lưỡi Trai Sport', price: 150000, img: 'hinh4.jpg', categoryId: 4, stock: 5 },
   { id: 5, name: 'Túi Xách Nữ Da Thật', price: 890000, img: 'hinh1.jpg', categoryId: 5, stock: 12 },
-  { id: 6, name: 'Áo Polo Thể Thao', price: 220000, img: 'hinh2.jpg', categoryId: 1, stock: 0 }, // Sẵn mẫu 0 để test hết hàng
+  { id: 6, name: 'Áo Polo Thể Thao', price: 220000, img: 'hinh2.jpg', categoryId: 1, stock: 0 },
 ];
 
 export const initDatabase = async (onSuccess?: () => void): Promise<void> => {
   try {
     const database = await getDb();
 
-    // Bổ sung cột stock nếu cơ sở dữ liệu cũ chưa có (sử dụng try-catch riêng ngoài transaction)
+    // Bổ sung cột stock nếu cơ sở dữ liệu cũ chưa có
     try {
       await database.executeSql('ALTER TABLE products ADD COLUMN stock INTEGER DEFAULT 10');
     } catch {
-      // Đã có cột stock, bỏ qua lỗi duplicate column
+      // Đã có cột stock
+    }
+
+    // Bổ sung cột paymentMethod nếu cơ sở dữ liệu cũ chưa có
+    try {
+      await database.executeSql("ALTER TABLE orders ADD COLUMN paymentMethod TEXT DEFAULT 'Thanh toán khi nhận hàng (COD)'");
+    } catch {
+      // Đã có cột paymentMethod
     }
 
     database.transaction((tx) => {
@@ -128,7 +136,8 @@ export const initDatabase = async (onSuccess?: () => void): Promise<void> => {
         phone TEXT,
         totalAmount REAL,
         createdAt TEXT,
-        status TEXT
+        status TEXT,
+        paymentMethod TEXT DEFAULT 'Thanh toán khi nhận hàng (COD)'
       )`);
 
       // 5. Order items table
@@ -358,14 +367,15 @@ export const createOrder = async (
   address: string,
   phone: string,
   totalAmount: number,
-  items: OrderItem[]
+  items: OrderItem[],
+  paymentMethod: string = 'Thanh toán khi nhận hàng (COD)'
 ): Promise<boolean> => {
   try {
     const db = await getDb();
     const createdAt = new Date().toLocaleString('vi-VN');
     const [res] = await db.executeSql(
-      'INSERT INTO orders (userId, username, address, phone, totalAmount, createdAt, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [userId, username, address, phone, totalAmount, createdAt, 'Đã đặt hàng']
+      'INSERT INTO orders (userId, username, address, phone, totalAmount, createdAt, status, paymentMethod) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [userId, username, address, phone, totalAmount, createdAt, 'Đã đặt hàng', paymentMethod]
     );
     const orderId = res.insertId;
     for (const item of items) {

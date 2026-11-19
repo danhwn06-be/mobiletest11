@@ -43,6 +43,7 @@ const CheckoutScreen = () => {
   const [user, setUser] = useState<User | null>(null);
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'COD' | 'BANKING' | 'MOMO'>('COD');
 
   useEffect(() => {
     const loadUser = async () => {
@@ -87,18 +88,26 @@ const CheckoutScreen = () => {
     const userId = user ? user.id : 0;
     const username = user ? user.username : 'Khách vãng lai';
 
+    const paymentLabel =
+      paymentMethod === 'BANKING'
+        ? 'Chuyển khoản Ngân hàng (VietQR)'
+        : paymentMethod === 'MOMO'
+        ? 'Ví điện tử MoMo / ZaloPay'
+        : 'Thanh toán khi nhận hàng (COD)';
+
     const success = await createOrder(
       userId,
       username,
       address.trim(),
       phone.trim(),
       totalAmount,
-      cartItems
+      cartItems,
+      paymentLabel
     );
 
     if (success) {
       await clearCart();
-      Alert.alert('🎉 Đặt hàng thành công!', 'Cảm ơn bạn đã mua sắm tại cửa hàng!', [
+      Alert.alert('🎉 Đặt hàng thành công!', `Đơn hàng của bạn sẽ được thanh toán bằng: ${paymentLabel}`, [
         {
           text: 'Xem đơn hàng',
           onPress: () => navigation.navigate('OrderHistory'),
@@ -143,6 +152,47 @@ const CheckoutScreen = () => {
         />
       </View>
 
+      {/* Chọn Phương thức thanh toán */}
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Phương thức thanh toán</Text>
+
+        <TouchableOpacity
+          style={[styles.paymentOption, paymentMethod === 'COD' && styles.paymentOptionActive]}
+          onPress={() => setPaymentMethod('COD')}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.paymentRadio}>{paymentMethod === 'COD' ? '🔘' : '⚪'}</Text>
+          <View style={styles.paymentTextGroup}>
+            <Text style={styles.paymentTitle}>💵 Thanh toán khi nhận hàng (COD)</Text>
+            <Text style={styles.paymentDesc}>Thanh toán tiền mặt cho shipper khi nhận được hàng</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.paymentOption, paymentMethod === 'BANKING' && styles.paymentOptionActive]}
+          onPress={() => setPaymentMethod('BANKING')}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.paymentRadio}>{paymentMethod === 'BANKING' ? '🔘' : '⚪'}</Text>
+          <View style={styles.paymentTextGroup}>
+            <Text style={styles.paymentTitle}>💳 Chuyển khoản Ngân hàng (VietQR)</Text>
+            <Text style={styles.paymentDesc}>Quét mã QR chuyển khoản nhanh qua ứng dụng Banking</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.paymentOption, paymentMethod === 'MOMO' && styles.paymentOptionActive]}
+          onPress={() => setPaymentMethod('MOMO')}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.paymentRadio}>{paymentMethod === 'MOMO' ? '🔘' : '⚪'}</Text>
+          <View style={styles.paymentTextGroup}>
+            <Text style={styles.paymentTitle}>📱 Ví điện tử MoMo / ZaloPay</Text>
+            <Text style={styles.paymentDesc}>Thanh toán tiện lợi qua ứng dụng ví điện tử</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
       {/* Tóm tắt đơn hàng có HIỂN THỊ HÌNH ẢNH SẢN PHẨM */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Sản phẩm đã chọn ({cartItems.length})</Text>
@@ -181,6 +231,27 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, borderColor: '#E0E0E0', borderRadius: 8, padding: 10, marginBottom: 12, color: '#212121' },
   readOnlyInput: { backgroundColor: '#F1F3F5', color: '#757575' },
   textArea: { height: 70, textAlignVertical: 'top' },
+
+  // Phương thức thanh toán
+  paymentOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 10,
+    marginBottom: 10,
+    backgroundColor: '#FAFAFA',
+  },
+  paymentOptionActive: {
+    borderColor: '#6200EA',
+    backgroundColor: '#F3E5F5',
+  },
+  paymentRadio: { fontSize: 18, marginRight: 10 },
+  paymentTextGroup: { flex: 1 },
+  paymentTitle: { fontSize: 14, fontWeight: 'bold', color: '#212121' },
+  paymentDesc: { fontSize: 11, color: '#757575', marginTop: 2 },
+
   checkoutItemRow: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -72,6 +72,9 @@ const OrderManagement = ({ onBack }: { onBack?: () => void }) => {
             <Text style={styles.userInfo}>👤 Người đặt: {item.username} (ID: {item.userId})</Text>
             <Text style={styles.detailText}>📞 SĐT: {item.phone}</Text>
             <Text style={styles.detailText}>📍 Địa chỉ: {item.address}</Text>
+            {item.paymentMethod && (
+              <Text style={styles.paymentText}>💳 Thanh toán: {item.paymentMethod}</Text>
+            )}
             <Text style={styles.dateText}>📅 Ngày đặt: {item.createdAt}</Text>
 
             <View style={styles.divider} />
@@ -114,6 +117,7 @@ const styles = StyleSheet.create({
   statusBadge: { color: '#2E7D32', fontSize: 12, fontWeight: 'bold' },
   userInfo: { fontSize: 14, fontWeight: 'bold', color: '#212121', marginBottom: 2 },
   detailText: { fontSize: 13, color: '#616161', marginBottom: 2 },
+  paymentText: { fontSize: 13, color: '#3F51B5', fontWeight: '600', marginBottom: 2 },
   dateText: { fontSize: 12, color: '#9E9E9E', marginBottom: 6 },
   divider: { height: 1, backgroundColor: '#EEEEEE', marginVertical: 8 },
   itemsTitle: { fontSize: 13, fontWeight: 'bold', color: '#424242', marginBottom: 4 },

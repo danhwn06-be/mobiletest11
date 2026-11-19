@@ -50,6 +50,9 @@ const OrderHistoryScreen = () => {
 
             <Text style={styles.dateText}>📅 Ngày đặt: {item.createdAt}</Text>
             <Text style={styles.addressText}>📍 Địa chỉ: {item.address} (SĐT: {item.phone})</Text>
+            {item.paymentMethod && (
+              <Text style={styles.paymentText}>💳 Thanh toán: {item.paymentMethod}</Text>
+            )}
 
             <View style={styles.divider} />
 
@@ -94,7 +97,8 @@ const styles = StyleSheet.create({
   orderId: { fontSize: 15, fontWeight: 'bold', color: '#6200EA' },
   statusBadge: { backgroundColor: '#E8F5E9', color: '#2E7D32', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12, fontSize: 12, fontWeight: 'bold' },
   dateText: { fontSize: 12, color: '#757575', marginBottom: 2 },
-  addressText: { fontSize: 13, color: '#424242', marginBottom: 6 },
+  addressText: { fontSize: 13, color: '#424242', marginBottom: 2 },
+  paymentText: { fontSize: 13, color: '#3F51B5', fontWeight: '600', marginBottom: 6 },
   divider: { height: 1, backgroundColor: '#EEEEEE', marginVertical: 8 },
   itemsTitle: { fontSize: 13, fontWeight: 'bold', color: '#616161', marginBottom: 4 },
   itemRow: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 2 },
